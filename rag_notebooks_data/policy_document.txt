@@ -1,0 +1,173 @@
+policy_documents = [
+    {
+        "desc": "loading_data",
+        "code": """
+import pandas as pd
+df = pd.read_csv('data.csv')
+"""
+    },
+    {
+        "desc": "loading_data",
+        "code": """
+import pandas as pd
+import sqlalchemy
+engine = sqlalchemy.create_engine('sqlite:///data.db')
+df = pd.read_sql('SELECT * FROM table', engine)
+"""
+    },
+    {
+        "desc": "loading_data",
+        "code": """
+import pandas as pd
+df = pd.read_excel('data.xlsx', sheet_name='Sheet1')
+"""
+    },
+    {
+        "desc": "preprocessing",
+        "code": """
+df.fillna(df.mean(), inplace=True)
+X = df.drop('target', axis=1)
+y = df['target']
+"""
+    },
+    {
+        "desc": "preprocessing",
+        "code": """
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+"""
+    },
+    {
+        "desc": "preprocessing",
+        "code": """
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+"""
+    },
+    {
+        "desc": "preprocessing",
+        "code": """
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df['category'] = le.fit_transform(df['category'])
+"""
+    },
+    {
+        "desc": "preprocessing",
+        "code": """
+X = pd.get_dummies(df.drop('target', axis=1), drop_first=True)
+y = df['target']
+"""
+    },
+    {
+        "desc": "preprocessing",
+        "code": """
+df['log_value'] = df['value'].apply(lambda x: np.log(x + 1e-9))
+"""
+    },
+    {
+        "desc": "loading_model",
+        "code": """
+from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+"""
+    },
+    {
+        "desc": "loading_model",
+        "code": """
+from sklearn.svm import SVC
+model = SVC(kernel='rbf', C=1.0, probability=True, random_state=42)
+"""
+    },
+    {
+        "desc": "loading_model",
+        "code": """
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression(max_iter=1000, random_state=42)
+"""
+    },
+    {
+        "desc": "fit",
+        "code": """
+model.fit(X_train, y_train)
+"""
+    },
+    {
+        "desc": "fit",
+        "code": """
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')
+print(f'Cross-validated accuracy: {scores.mean():.2f}')
+"""
+    },
+    {
+        "desc": "fit",
+        "code": """
+from sklearn.model_selection import GridSearchCV
+param_grid = {'C': [0.1, 1, 10], 'kernel': ['linear', 'rbf']}
+grid = GridSearchCV(SVC(), param_grid, cv=5)
+grid.fit(X_train, y_train)
+model = grid.best_estimator_
+"""
+    },
+    {
+        "desc": "results",
+        "code": """
+from sklearn.metrics import classification_report
+y_pred = model.predict(X_test)
+print(classification_report(y_test, y_pred))
+"""
+    },
+    {
+        "desc": "results",
+        "code": """
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True)
+plt.show()
+"""
+    },
+    {
+        "desc": "results",
+        "code": """
+importances = model.feature_importances_
+feature_importance = pd.DataFrame({'feature': X.columns, 'importance': importances})
+feature_importance.sort_values('importance', ascending=False, inplace=True)
+print(feature_importance.head(10))
+"""
+    },
+    {
+        "desc": "exploratory_analysis",
+        "code": """
+print(df.shape)
+print(df.dtypes)
+print(df.describe())
+"""
+    },
+    {
+        "desc": "exploratory_analysis",
+        "code": """
+print(df.isnull().sum())
+print(y.value_counts())
+"""
+    },
+    {
+        "desc": "inference",
+        "code": """
+y_pred = model.predict(X_test)
+print(y_pred[:10])
+"""
+    },
+    {
+        "desc": "inference",
+        "code": """
+sample = X_test.iloc[0:1]
+prediction = model.predict(sample)
+probability = model.predict_proba(sample)
+print(f'Predicted class: {prediction[0]}, Probability: {probability.max():.2f}')
+"""
+    }
+]
