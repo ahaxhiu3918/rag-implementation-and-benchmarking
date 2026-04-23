@@ -100,7 +100,7 @@ Metrics include:
  - Recall 
 
 
-### 🛠️ Customization & Imporvements
+### 🛠️ Customization & Improvements
 
  - Add New Models: Place new RAG implementations in models/. (other than starcoder2-3n)
  - Extend Datasets: Add datasets to rag_notebooks_data/.
